@@ -18,7 +18,7 @@ jobs:
     env:
       DOCKER_USER: ${{ secrets.docker_user }}
       DOCKER_PASS: ${{ secrets.docker_pass }}
-      IMAGE: ${{ secrets.docker_user }}/mini-curso-devops
+      IMAGE: ${{ secrets.docker_user }}/fag-cloud-docker
       TAG: ${{ github.run_number }}
 
     steps:
@@ -56,8 +56,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.AWS_KEY }}" > ~/.ssh/aws_key.pem
           chmod 600 ~/.ssh/aws_key.pem
-          scp -i ~/.ssh/aws_key.pem  -o StrictHostKeyChecking=no -r docker-compose.yml ubuntu@ec2-aws.compute-1.amazonaws.com:/home/ubuntu/docker      
-          ssh -i ~/.ssh/aws_key.pem -o StrictHostKeyChecking=no ubuntu@ec2-aws.compute-1.amazonaws.com << EOF
+          scp -i ~/.ssh/aws_key.pem  -o StrictHostKeyChecking=no -r docker-compose.yml ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com:/home/ubuntu/docker      
+          ssh -i ~/.ssh/aws_key.pem -o StrictHostKeyChecking=no ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com << EOF
             set -e 
             cd /home/ubuntu/docker
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin  
