@@ -57,7 +57,7 @@ jobs:
           echo "${{ secrets.AWS_KEY }}" > ~/.ssh/aws_key.pem
           chmod 600 ~/.ssh/aws_key.pem
           scp -i ~/.ssh/aws_key.pem  -o StrictHostKeyChecking=no -r docker-compose.yml ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com:/home/ubuntu/docker      
-          ssh -i ~/.ssh/koehlerlabs-key-prod.pem -o StrictHostKeyChecking=no ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com \
+          ssh -i ~/.ssh/aws_key.pem -o StrictHostKeyChecking=no ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com \
                       DOCKER_USER="${{ env.DOCKER_USER }}" \
                       DOCKER_PASS="${{ env.DOCKER_PASS }}" \
                       bash << EOF
