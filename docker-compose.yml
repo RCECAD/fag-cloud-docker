@@ -1,0 +1,18 @@
+services:
+  web:
+    container_name: mini-curso-devops
+    image: ${DOCKER_USER}/mini-curso-devops:latest
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+      - TZ=America/Sao_Paulo
+    restart: always
+    mem_limit: 512m
+    cpus: "0.50"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s

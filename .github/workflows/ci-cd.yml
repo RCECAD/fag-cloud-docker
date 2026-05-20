@@ -1,0 +1,65 @@
+name: Node.js Docker
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      DOCKER_USER: ${{ secrets.docker_user }}
+      DOCKER_PASS: ${{ secrets.docker_pass }}
+      IMAGE: ${{ secrets.docker_user }}/mini-curso-devops
+      TAG: ${{ github.run_number }}
+
+    steps:
+      - name: Download Repo
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Build
+        run: |
+          set -e 
+          docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" -f Dockerfile . 
+          docker images | head -n 10 
+          #docker push $IMAGE --all-tags
+
+      - name: Login and Push
+        run: |
+          docker login -u ${{secrets.docker_user}} -p ${{secrets.docker_pass}}
+          docker push $IMAGE:$TAG && docker push $IMAGE:latest
+        # docker push $IMAGE --all-tags
+
+  commit-image:
+    env:
+      DOCKER_USER: ${{ secrets.docker_user }}
+      DOCKER_PASS: ${{ secrets.docker_pass }}
+
+    needs: build-image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Repo
+        uses: actions/checkout@v4
+
+      - name: Enviar arquivos para Server e Executar Docker Compose
+        run: |
+          echo "Configurando conexão SSH..."
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_KEY }}" > ~/.ssh/aws_key.pem
+          chmod 600 ~/.ssh/aws_key.pem
+          scp -i ~/.ssh/aws_key.pem  -o StrictHostKeyChecking=no -r docker-compose.yml ubuntu@ec2-aws.compute-1.amazonaws.com:/home/ubuntu/docker      
+          ssh -i ~/.ssh/aws_key.pem -o StrictHostKeyChecking=no ubuntu@ec2-aws.compute-1.amazonaws.com << EOF
+            set -e 
+            cd /home/ubuntu/docker
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin  
+            docker compose up -d --force-recreate     
+            echo "Deploy finalizado com sucesso!!!"
+          EOF

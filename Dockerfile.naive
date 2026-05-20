@@ -1,0 +1,21 @@
+######### SEM MULTISTAGE #############
+# define imagem a ser utilizada (unica para build e runtime)
+FROM node:lts
+
+# define path default para arquivo
+WORKDIR /usr/src/app
+
+# copia arquivos locais para dentro da imagem
+COPY ./aula-cloud-docker/ ./
+
+# instalar dependencias(garante versão com o CI)
+RUN npm ci
+
+# Build o projeto gerando uma saida
+RUN npm run build
+
+# Expose a porta do servidor, ou seja externaliza o serve da Imagem
+EXPOSE 3000
+
+# Serve os arquivos estaticos do /dist
+CMD ["npx", "serve", "dist"]
