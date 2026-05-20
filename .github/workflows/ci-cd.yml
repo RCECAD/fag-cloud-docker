@@ -57,11 +57,22 @@ jobs:
           echo "${{ secrets.AWS_KEY }}" > ~/.ssh/aws_key.pem
           chmod 600 ~/.ssh/aws_key.pem
           scp -i ~/.ssh/aws_key.pem  -o StrictHostKeyChecking=no -r docker-compose.yml ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com:/home/ubuntu/docker      
-          ssh -i ~/.ssh/aws_key.pem -o StrictHostKeyChecking=no ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com << EOF
-            set -e 
-            cd /home/ubuntu/docker
-            echo "$DOCKER_USER"
-            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin  
-            docker compose up -d --force-recreate      
-            echo "Deploy finalizado com sucesso!!!"
-          EOF
+          ssh -i ~/.ssh/koehlerlabs-key-prod.pem -o StrictHostKeyChecking=no ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com \
+                      DOCKER_USER="${{ env.DOCKER_USER }}" \
+                      DOCKER_PASS="${{ env.DOCKER_PASS }}" \
+                      bash << EOF
+                        set -e
+                        cd /home/ubuntu/docker
+                        echo "dokcer user: $DOCKER_USER"
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin  
+                        docker compose up -d --force-recreate     
+                        echo "Deploy finalizado com sucesso!!!"
+                    EOF
+#          ssh -i ~/.ssh/aws_key.pem -o StrictHostKeyChecking=no ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com << EOF
+#            set -e
+#            cd /home/ubuntu/docker
+#            echo "$DOCKER_USER"
+#            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+#            docker compose up -d --force-recreate
+#            echo "Deploy finalizado com sucesso!!!"
+#          EOF
