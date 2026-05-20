@@ -28,7 +28,7 @@ jobs:
       - name: Set up Docker Build
         run: |
           set -e 
-          docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" -f Dockerfile . 
+          docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" -f Dockerfile.multistage . 
           docker images | head -n 10 
           #docker push $IMAGE --all-tags
 
