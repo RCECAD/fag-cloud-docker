@@ -60,6 +60,7 @@ jobs:
           ssh -i ~/.ssh/aws_key.pem -o StrictHostKeyChecking=no ubuntu@ec2-23-22-165-130.compute-1.amazonaws.com << EOF
             set -e 
             cd /home/ubuntu/docker
+            echo "$DOCKER_USER"
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin  
             docker compose up -d --force-recreate     
             echo "Deploy finalizado com sucesso!!!"
