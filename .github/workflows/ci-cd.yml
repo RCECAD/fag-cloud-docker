@@ -62,6 +62,6 @@ jobs:
             cd /home/ubuntu/docker
             echo "$DOCKER_USER"
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin  
-            docker compose up -d --force-recreate     
+            docker compose up -d --force-recreate      
             echo "Deploy finalizado com sucesso!!!"
           EOF

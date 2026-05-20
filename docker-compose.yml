@@ -1,7 +1,7 @@
 services:
   web:
     container_name: fag-cloud-docker
-    image: ${DOCKER_USER}/fag-cloud-docker:latest
+    image: rafaelroani/fag-cloud-docker:latest
     ports:
       - "80:80"
     environment:
