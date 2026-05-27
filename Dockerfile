@@ -12,7 +12,7 @@ COPY package*.json ./
 RUN npm ci
 
 # copia o restante do código
-COPY . ./
+COPY ./aula-cloud-docker/ ./
 
 # build do projeto gerando os arquivos estáticos em /dist
 RUN npm run build
